@@ -1,4 +1,5 @@
 using AspirePostgresRag.ApiService;
+using AspirePostgresRag.ApiService.Endpoints;
 using Scalar.AspNetCore;
 using ServiceDefaults;
 
@@ -52,21 +53,8 @@ app.MapGet("/weatherforecast", () =>
 .CacheOutput()
 .WithName("GetWeatherForecast");
 
-app.MapPost("/hello", (HelloRequest request) => request.Greeting + " " + request.Name)
-    .WithName("Hello world");
+app.MapHelloWorldEndpoints();
 
 app.MapDefaultEndpoints();
 
 app.Run();
-
-record HelloRequest(string Name, Greeting Greeting) : IHaveExample
-{
-    public static object GetExample() => new HelloRequest("World", Greeting.Hello);
-}
-
-enum Greeting
-{
-    Hello = 1,
-    Hi = 2,
-    Greetings = 3,
-}
