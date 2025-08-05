@@ -1,4 +1,4 @@
-﻿namespace AspirePostgresRag.Models.Exceptions;
+﻿namespace AspirePostgresRag.ApiService.Exceptions;
 
 public class NotFoundAfterSaveException(int id): Exception($"Entity with id {id} was not found after save.")
 {

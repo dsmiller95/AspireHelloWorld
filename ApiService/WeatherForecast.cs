@@ -1,4 +1,4 @@
-﻿namespace AspirePostgresRag.Models;
+﻿namespace AspirePostgresRag.ApiService;
 
 public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {

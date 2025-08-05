@@ -1,5 +1,6 @@
-using AspirePostgresRag.Models;
-using AspirePostgresRag.ServiceDefaults;
+using AspirePostgresRag.ApiService;
+using Scalar.AspNetCore;
+using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,10 @@ builder.AddServiceDefaults();
 builder.Services.AddProblemDetails();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(o =>
+{
+    o.AddSchemaTransformer<ExampleSchemaTransformer>();
+});
 
 var app = builder.Build();
 
@@ -25,6 +29,10 @@ app.UseExceptionHandler();
 if (true) // || app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
+    app.Map("/", () => Results.Redirect("/scalar/v1"))
+        .WithName("RootRedirect")
+        .WithSummary("Redirect to Scalar API");
 }
 
 string[] summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
@@ -44,6 +52,21 @@ app.MapGet("/weatherforecast", () =>
 .CacheOutput()
 .WithName("GetWeatherForecast");
 
+app.MapPost("/hello", (HelloRequest request) => request.Greeting + " " + request.Name)
+    .WithName("Hello world");
+
 app.MapDefaultEndpoints();
 
 app.Run();
+
+record HelloRequest(string Name, Greeting Greeting) : IHaveExample
+{
+    public static object GetExample() => new HelloRequest("World", Greeting.Hello);
+}
+
+enum Greeting
+{
+    Hello = 1,
+    Hi = 2,
+    Greetings = 3,
+}
